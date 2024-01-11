@@ -1,5 +1,4 @@
-import express, { Request, Response } from 'express';
-import multer from 'multer';
+import express from 'express';
 import dotenv from 'dotenv';
 import router from './routes/file.route';
 const app = express();

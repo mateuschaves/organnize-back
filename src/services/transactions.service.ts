@@ -1,6 +1,19 @@
 import csvParser from "csv-parser";
 import fs from 'fs';
 import { Response } from "express";
+
+interface ExpenseRow {
+    Data: string;
+    Estabelecimento: string;
+    Categoria: string;
+    Valor: string;
+}
+
+let numberOfExpensesMapped = 0;
+let numberOfExpenses = 0;
+
+const expensesNotMapped: ExpenseRow[] = [];
+
 const categories = {
     'Transporte': [],
     'Alimentação': [],
@@ -10,6 +23,8 @@ const categories = {
     'Outros': [],
     'Casa': [],
     'Taxas': [],
+    'Compras': [],
+    'Cuidados Pessoais': [],
 };
 
 const expensesByCategory = {
@@ -21,6 +36,8 @@ const expensesByCategory = {
     'Outros': 0,
     'Casa': 0,
     'Taxas': 0,
+    'Compras': 0,
+    'Cuidados Pessoais': 0,
 };
 
 const keywordMapping = {
@@ -46,16 +63,42 @@ const keywordMapping = {
     'KUMA RESTAURANTE': 'Alimentação',
     'SPOLETO': 'Alimentação',
     'BANCOXPSEGUROCAR': 'Taxas',
-    'DIGAE': 'Alimentação'
+    'DIGAE': 'Alimentação',
+    'FELIXMERCHANT': 'Compras',
+    'BR220 FO SHOPPING LIGH': 'Compras',
+    'AMAZON': 'Compras',
+    'MAGAZINELUIZA': 'Compras',
+    'AMERICANAS': 'Compras',
+    'RIACHUELO': 'Compras',
+    'HAPPYMACHINE': 'Lazer',
+    'PAG*SEUJOHBEER': 'Lazer',
+    'BARBA DE REI': 'Cuidados Pessoais',
+    'SHOPPING': 'Compras',
+    'MERCADINHO': 'Alimentação',
+    'CARREFOUR': 'Alimentação',
+    'CAFE': 'Alimentação',
+    'RESTAURANTE': 'Alimentação',
+    'GUILHERME': 'Compras',
+    'BEBIDORAMA': 'Alimentação',
 };
-function processCSVData(data: any) {
+
+
+function processCSVData(data: ExpenseRow) {
     const { Estabelecimento, Valor } = data;
     for (const keyword in keywordMapping) {
+        const isLastExpenseMapped = keyword === Object.keys(keywordMapping)[Object.keys(keywordMapping).length - 1];
         if (String(Estabelecimento).toUpperCase().includes(keyword)) {
             categories[keywordMapping[keyword]].push(data);
             expensesByCategory[keywordMapping[keyword]] += parseMoneyValueFromCSV(Valor)
+
+            numberOfExpensesMapped++;
+            break;
+        } else if (isLastExpenseMapped) {
+            expensesNotMapped.push(data);
         }
     }
+
+    numberOfExpenses++;
 }
 
 function parseMoneyValueFromCSV(value: string) {
@@ -71,6 +114,10 @@ export function handleCSVFile(file: Express.Multer.File | undefined, res: Respon
         .on('data', processCSVData)
         .on('end', () => {
             console.table(expensesByCategory);
+            console.log(`Total expenses mapped: ${numberOfExpensesMapped}`);
+            console.log(`Total expenses: ${numberOfExpenses}`);
+            console.log(`Total expenses not mapped: ${numberOfExpenses - numberOfExpensesMapped}`)
+            console.table(expensesNotMapped);
             res.send('File uploaded and processed successfully');
         });
 }
