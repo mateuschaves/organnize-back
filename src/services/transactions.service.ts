@@ -65,7 +65,7 @@ function parseMoneyValueFromCSV(value: string) {
     return roundedValue;
 }
 
-export function handleCSVFile(file: Express.Multer.File, res: Response) {
+export function handleCSVFile(file: Express.Multer.File | undefined, res: Response) {
     file?.path && fs.createReadStream(file?.path)
         .pipe(csvParser({ separator: ';' }))
         .on('data', processCSVData)
