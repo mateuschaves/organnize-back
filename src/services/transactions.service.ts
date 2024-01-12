@@ -1,6 +1,5 @@
 import csvParser from "csv-parser";
 import fs from 'fs';
-import { Response } from "express";
 
 interface ExpenseRow {
     Data: string;
@@ -108,8 +107,13 @@ function parseMoneyValueFromCSV(value: string) {
     return roundedValue;
 }
 
-export function handleCSVFile(file: Express.Multer.File | undefined, res: Response) {
-    file?.path && fs.createReadStream(file?.path)
+export function handleCSVFile(file: Express.Multer.File | undefined) {
+    return new Promise((resolve, reject) => {
+        if (!file) {
+            return reject(new Error('No file provided'));
+        }
+
+        fs.createReadStream(file?.path)
         .pipe(csvParser({ separator: ';' }))
         .on('data', processCSVData)
         .on('end', () => {
@@ -118,6 +122,8 @@ export function handleCSVFile(file: Express.Multer.File | undefined, res: Respon
             console.log(`Total expenses: ${numberOfExpenses}`);
             console.log(`Total expenses not mapped: ${numberOfExpenses - numberOfExpensesMapped}`)
             console.table(expensesNotMapped);
-            res.send('File uploaded and processed successfully');
-        });
+
+            resolve(expensesByCategory);
+        })
+    });
 }
