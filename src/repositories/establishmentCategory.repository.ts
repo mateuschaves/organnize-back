@@ -1,11 +1,12 @@
 import { Prisma, PrismaClient } from "@prisma/client";
 import EstablishmentCategoryRepositoryInterface from "../interface/repositories/establishmentCategory.interface";
+import PrismaInstance from "../config/db";
 
 
 
 class EstablishmentCategoryRepository implements EstablishmentCategoryRepositoryInterface {
     constructor(
-        private prisma: PrismaClient = new PrismaClient()
+        private prisma: PrismaClient = PrismaInstance
     ) {}
 
     async getAll<T>(args?: Prisma.EstablishmentCategoryFindManyArgs): Promise<T[]> {

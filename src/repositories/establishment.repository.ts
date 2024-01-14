@@ -1,9 +1,10 @@
 import { Prisma, PrismaClient } from "@prisma/client";
 import EstablishmentRepositoryInterface from "../interface/repositories/establishment.interface";
+import PrismaInstance from "../config/db";
 
 class EstablishmentRepository implements EstablishmentRepositoryInterface{
     constructor(
-        private prisma: PrismaClient = new PrismaClient()
+        private prisma: PrismaClient = PrismaInstance
     ) {}
     getByName(name: string): Promise<any> {
         return this.prisma.establishment.findFirst({

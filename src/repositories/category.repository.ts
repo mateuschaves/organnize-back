@@ -1,12 +1,10 @@
 import { Prisma, PrismaClient } from '@prisma/client';
 import { CategoryRepositoryInterface } from '../interface/repositories/category.inteface';
+import PrismaInstance from '../config/db';
 
 class CategoryRepository implements CategoryRepositoryInterface {
     constructor(
-        private prisma: PrismaClient = new PrismaClient({
-            log: ['query', 'info', 'warn', 'error'],
-            errorFormat: 'pretty',
-        })
+        private prisma: PrismaClient = PrismaInstance
     ) {}
 
     async getAll() {
