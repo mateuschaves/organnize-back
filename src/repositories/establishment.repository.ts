@@ -6,7 +6,9 @@ class EstablishmentRepository implements EstablishmentRepositoryInterface{
         private prisma: PrismaClient = new PrismaClient()
     ) {}
     getByName(name: string): Promise<any> {
-        throw new Error("Method not implemented.");
+        return this.prisma.establishment.findFirst({
+            where: { name }
+        });
     }
 
     async getAll() {

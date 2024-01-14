@@ -17,7 +17,6 @@ class CategoryController {
 
             return response.json(categories);
        } catch (error) {
-        console.log(error);
             return response.status(500).json({ error: error.message });
        }
     }
@@ -30,7 +29,6 @@ class CategoryController {
 
             return response.json(category);
         } catch (error) {
-            console.log(error);
             return response.status(500).json({ error: error.message });
         }
     }
