@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 
 import FileRoutes from './routes/file.route';
 import CategoryRoutes from './routes/category.route';
+import EstablishmentRoutes from './routes/establishment.route';
 
 const app = express();
 
@@ -14,6 +15,7 @@ app.use(express.json());
 
 app.use(FileRoutes);
 app.use(CategoryRoutes);
+app.use(EstablishmentRoutes);
 
 
 app.listen(port, () => {
