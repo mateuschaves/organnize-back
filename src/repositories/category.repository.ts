@@ -3,7 +3,10 @@ import { CategoryRepositoryInterface } from '../interface/repositories/category.
 
 class CategoryRepository implements CategoryRepositoryInterface {
     constructor(
-        private prisma: PrismaClient = new PrismaClient()
+        private prisma: PrismaClient = new PrismaClient({
+            log: ['query', 'info', 'warn', 'error'],
+            errorFormat: 'pretty',
+        })
     ) {}
 
     async getAll() {

@@ -1,7 +1,7 @@
 import { Category, Prisma } from "@prisma/client";
 
 export interface CategoryRepositoryInterface {
-    getAll(): Promise<Category[]>;
+    getAll(args?: Prisma.CategoryFindManyArgs): Promise<Category[]>;
     getById(id: number): Promise<Category | null>;
     getByName(name: string): Promise<Category | null>;
     create(data: Prisma.CategoryCreateInput): Promise<Category>;

@@ -21,7 +21,7 @@ type EstablishmentCategoryGetPayload = Prisma.EstablishmentCategoryGetPayload<{
     }
 }>;
 
-class TransactionsService {
+class TransactionService {
     private transactionsByCategory: Record<string, ExpenseRow[]> = {};
     private expensesByCategory: Record<string, number> = {};
     private expensesNotMapped: ExpenseRow[] = [];
@@ -30,8 +30,8 @@ class TransactionsService {
     private keywordMapping: Record<string, string> = {};
 
     constructor(
-        private categoryRepository: CategoryRepositoryInterface = CategoryRepository,
-        private establishmentCategoryRepository: EstablishmentCategoryRepositoryInterface = EstablishmentCategoryRepository,
+        private readonly categoryRepository: CategoryRepositoryInterface = CategoryRepository,
+        private readonly establishmentCategoryRepository: EstablishmentCategoryRepositoryInterface = EstablishmentCategoryRepository,
     ) {}
 
     processCsvRow(row: ExpenseRow) {
@@ -109,4 +109,4 @@ class TransactionsService {
 
 }
 
-export default new TransactionsService();
+export default new TransactionService();
