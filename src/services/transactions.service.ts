@@ -1,6 +1,12 @@
 import csvParser from "csv-parser";
 import fs from 'fs';
 
+import CategoryRepository from "../repositories/category.repository";
+import EstablishmentCategoryRepository from "../repositories/establishmentCategory.repository";
+import { CategoryRepositoryInterface } from "../interface/repositories/category.inteface";
+import EstablishmentCategoryRepositoryInterface from "../interface/repositories/establishmentCategory.interface";
+import { Prisma } from "@prisma/client";
+
 interface ExpenseRow {
     Data: string;
     Estabelecimento: string;
@@ -8,122 +14,99 @@ interface ExpenseRow {
     Valor: string;
 }
 
-let numberOfExpensesMapped = 0;
-let numberOfExpenses = 0;
+type EstablishmentCategoryGetPayload = Prisma.EstablishmentCategoryGetPayload<{
+    include: {
+        establishment: true;
+        category: true;
+    }
+}>;
 
-const expensesNotMapped: ExpenseRow[] = [];
+class TransactionsService {
+    private transactionsByCategory: Record<string, ExpenseRow[]> = {};
+    private expensesByCategory: Record<string, number> = {};
+    private expensesNotMapped: ExpenseRow[] = [];
+    private transactions: ExpenseRow[] = [];
+    private numberOfExpensesMapped = 0;
+    private keywordMapping: Record<string, string> = {};
 
-const categories = {
-    'Transporte': [],
-    'Alimentação': [],
-    'Saúde': [],
-    'Educação': [],
-    'Lazer': [],
-    'Outros': [],
-    'Casa': [],
-    'Taxas': [],
-    'Compras': [],
-    'Cuidados Pessoais': [],
-};
+    constructor(
+        private categoryRepository: CategoryRepositoryInterface = CategoryRepository,
+        private establishmentCategoryRepository: EstablishmentCategoryRepositoryInterface = EstablishmentCategoryRepository,
+    ) {}
 
-const expensesByCategory = {
-    'Transporte': 0,
-    'Alimentação': 0,
-    'Saúde': 0,
-    'Educação': 0,
-    'Lazer': 0,
-    'Outros': 0,
-    'Casa': 0,
-    'Taxas': 0,
-    'Compras': 0,
-    'Cuidados Pessoais': 0,
-};
+    processCsvRow(row: ExpenseRow) {
+        const { Estabelecimento, Valor } = row;
 
-const keywordMapping = {
-    'UBER': 'Transporte',
-    '99': 'Transporte',
-    'IFOOD': 'Alimentação',
-    'MERCADO': 'Alimentação',
-    'PADARIA': 'Alimentação',
-    'FARMACIA': 'Saúde',
-    'DROGARIA': 'Saúde',
-    'HOSPITAL': 'Saúde',
-    'ESCOLA': 'Educação',
-    'FACULDADE': 'Educação',
-    'LIVRARIA': 'Educação',
-    'CINEMA': 'Lazer',
-    'PARQUE': 'Lazer',
-    'TEATRO': 'Lazer',
-    'VIAGEM': 'Lazer',
-    'LAVANDERIA': 'Casa',
-    'TOP': 'Transporte',
-    'MARKET4U': 'Alimentação',
-    'GRAN  COFFEE': 'Alimentação',
-    'KUMA RESTAURANTE': 'Alimentação',
-    'SPOLETO': 'Alimentação',
-    'BANCOXPSEGUROCAR': 'Taxas',
-    'DIGAE': 'Alimentação',
-    'FELIXMERCHANT': 'Compras',
-    'BR220 FO SHOPPING LIGH': 'Compras',
-    'AMAZON': 'Compras',
-    'MAGAZINELUIZA': 'Compras',
-    'AMERICANAS': 'Compras',
-    'RIACHUELO': 'Compras',
-    'HAPPYMACHINE': 'Lazer',
-    'PAG*SEUJOHBEER': 'Lazer',
-    'BARBA DE REI': 'Cuidados Pessoais',
-    'SHOPPING': 'Compras',
-    'MERCADINHO': 'Alimentação',
-    'CARREFOUR': 'Alimentação',
-    'CAFE': 'Alimentação',
-    'RESTAURANTE': 'Alimentação',
-    'GUILHERME': 'Compras',
-    'BEBIDORAMA': 'Alimentação',
-};
+        this.transactions.push(row);
 
+        for (const keyword in this.keywordMapping) {
+            const isLastExpenseMapped = keyword === Object.keys(this.keywordMapping)[Object.keys(this.keywordMapping).length - 1];
+            if (String(Estabelecimento).toUpperCase().includes(keyword)) {
+                console.log('Valor' + Valor)
+                const parsedValue = Number(String(Valor).replace('R$', '').replace(',', '.').replace(' ', '')) || 0;
+                this.expensesByCategory[this.keywordMapping[keyword]] += parsedValue;
 
-function processCSVData(data: ExpenseRow) {
-    const { Estabelecimento, Valor } = data;
-    for (const keyword in keywordMapping) {
-        const isLastExpenseMapped = keyword === Object.keys(keywordMapping)[Object.keys(keywordMapping).length - 1];
-        if (String(Estabelecimento).toUpperCase().includes(keyword)) {
-            categories[keywordMapping[keyword]].push(data);
-            expensesByCategory[keywordMapping[keyword]] += parseMoneyValueFromCSV(Valor)
-
-            numberOfExpensesMapped++;
-            break;
-        } else if (isLastExpenseMapped) {
-            expensesNotMapped.push(data);
+                this.numberOfExpensesMapped++;
+                break;
+            } else if (isLastExpenseMapped) {
+                this.expensesNotMapped.push(row);
+            }
         }
     }
 
-    numberOfExpenses++;
-}
 
-function parseMoneyValueFromCSV(value: string) {
-    const cleanedValue = value.replace('R$', '').replace(',', '.').replace(' ', '');
-    const parsedValue = parseFloat(cleanedValue);
-    const roundedValue = Math.round(parsedValue * 100) / 100;
-    return roundedValue;
-}
-
-export function handleCSVFile(file: Express.Multer.File | undefined) {
-    return new Promise((resolve, reject) => {
-        if (!file) {
-            return reject(new Error('No file provided'));
+    async groupTransactionsByCategory() {
+        const categories = await this.categoryRepository.getAll();
+        for (const category of categories) {
+            this.transactionsByCategory[category.name] = [];
+            this.expensesByCategory[category.name] = 0;
         }
+    }
 
-        fs.createReadStream(file?.path)
-        .pipe(csvParser({ separator: ';' }))
-        .on('data', processCSVData)
-        .on('end', () => {
-            console.table(expensesByCategory);
-            console.log(`Total expenses mapped: ${numberOfExpensesMapped}`);
-            console.log(`Total expenses: ${numberOfExpenses}`);
-            console.log(`Total expenses not mapped: ${numberOfExpenses - numberOfExpensesMapped}`)
-            console.table(expensesNotMapped);
+    async createEstablishmentCategoryMapping() {
+        const establishmentCategories: EstablishmentCategoryGetPayload[] = await this.establishmentCategoryRepository.getAll<EstablishmentCategoryGetPayload>({
+            include: {
+                establishment: true,
+                category: true
+            }
+        });
+        for (const establishmentCategory of establishmentCategories) {
+            this.keywordMapping[String(establishmentCategory.establishment.name).toUpperCase()] = establishmentCategory.category.name;
+        }
+    }
 
-            resolve(expensesByCategory);
-        })
-    });
+    public async handleCSVFile(file: Express.Multer.File | undefined) {
+       await Promise.all([
+            this.groupTransactionsByCategory(),
+            this.createEstablishmentCategoryMapping()
+        ])
+
+        return new Promise((resolve, reject) => {
+            if (!file) {
+                return reject(new Error('No file provided'));
+            }
+
+            fs.createReadStream(file?.path)
+                .pipe(csvParser({ separator: ';' }))
+                .on('data', (row) => this.processCsvRow(row))
+                .on('end', () => {
+                    const expensesByCategoryArray = Object.keys(this.expensesByCategory).map((key) => {
+                        return {
+                            category: String(key).toUpperCase(),
+                            value: new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(this.expensesByCategory[key])
+                        }
+                    });
+                    console.table(expensesByCategoryArray);
+                    console.log(`Total expenses mapped: ${this.numberOfExpensesMapped}`);
+                    console.log(`Total expenses: ${this.transactions.length}`);
+                    console.log(`Total expenses not mapped: ${this.transactions.length - this.numberOfExpensesMapped}`)
+                    console.table(this.expensesNotMapped);
+
+                    resolve(this.expensesByCategory);
+                })
+        });
+    }
+
 }
+
+export default new TransactionsService();

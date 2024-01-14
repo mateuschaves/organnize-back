@@ -1,12 +1,15 @@
 import { Prisma, PrismaClient } from "@prisma/client";
+import EstablishmentCategoryRepositoryInterface from "../interface/repositories/establishmentCategory.interface";
 
-class EstablishmentCategoryRepository {
+
+
+class EstablishmentCategoryRepository implements EstablishmentCategoryRepositoryInterface {
     constructor(
         private prisma: PrismaClient = new PrismaClient()
     ) {}
 
-    async getAll() {
-        return this.prisma.establishmentCategory.findMany();
+    async getAll<T>(args?: Prisma.EstablishmentCategoryFindManyArgs): Promise<T[]> {
+        return this.prisma.establishmentCategory.findMany(args) as unknown as T[];
     }
 
     async getById(id: number) {

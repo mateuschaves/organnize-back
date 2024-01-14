@@ -1,6 +1,7 @@
 import { Prisma, PrismaClient } from '@prisma/client';
+import { CategoryRepositoryInterface } from '../interface/repositories/category.inteface';
 
-class CategoryRepository {
+class CategoryRepository implements CategoryRepositoryInterface {
     constructor(
         private prisma: PrismaClient = new PrismaClient()
     ) {}

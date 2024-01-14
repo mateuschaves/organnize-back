@@ -1,9 +1,13 @@
 import { Prisma, PrismaClient } from "@prisma/client";
+import EstablishmentRepositoryInterface from "../interface/repositories/establishment.interface";
 
-class EstablishmentRepository {
+class EstablishmentRepository implements EstablishmentRepositoryInterface{
     constructor(
         private prisma: PrismaClient = new PrismaClient()
     ) {}
+    getByName(name: string): Promise<any> {
+        throw new Error("Method not implemented.");
+    }
 
     async getAll() {
         return this.prisma.establishment.findMany();
