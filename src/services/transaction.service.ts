@@ -42,7 +42,6 @@ class TransactionService {
         for (const keyword in this.keywordMapping) {
             const isLastExpenseMapped = keyword === Object.keys(this.keywordMapping)[Object.keys(this.keywordMapping).length - 1];
             if (String(Estabelecimento).toUpperCase().includes(keyword)) {
-                console.log('Valor' + Valor)
                 const parsedValue = Number(String(Valor).replace('R$', '').replace(',', '.').replace(' ', '')) || 0;
                 this.expensesByCategory[this.keywordMapping[keyword]] += parsedValue;
 
