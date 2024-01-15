@@ -16,7 +16,7 @@ class EstablishmentController {
         const establishments = await this.establishmentService.getAll();
     
         return response.json(establishments);
-        } catch (error) {
+        } catch (error: any) {
         return response.status(500).json({ error: error.message });
         }
     }
@@ -28,7 +28,7 @@ class EstablishmentController {
         const establishment = await this.establishmentService.getById(Number(id));
     
         return response.json(establishment);
-        } catch (error) {
+        } catch (error:any) {
         return response.status(500).json({ error: error.message });
         }
     }
@@ -40,7 +40,7 @@ class EstablishmentController {
         const establishment = await this.establishmentService.create({ name });
     
         return response.json(establishment);
-        } catch (error) {
+        } catch (error: any) {
         return response.status(500).json({ error: error.message });
         }
     }
@@ -53,7 +53,7 @@ class EstablishmentController {
         const establishment =  await this.establishmentService.update(Number(id), { name });
     
         return response.json(establishment);
-        } catch (error) {
+        } catch (error: any) {
         return response.status(500).json({ error: error.message });
         }
     }
@@ -65,7 +65,7 @@ class EstablishmentController {
         await this.establishmentService.delete(Number(id));
     
         return response.status(204).send();
-        } catch (error) {
+        } catch (error: any) {
         return response.status(500).json({ error: error.message });
         }
     }

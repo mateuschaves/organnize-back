@@ -16,7 +16,8 @@ class CategoryController {
             const categories = await this._categoryService.getAll();
 
             return response.json(categories);
-       } catch (error) {
+       } catch (error: any) {
+
             return response.status(500).json({ error: error.message });
        }
     }
@@ -28,7 +29,7 @@ class CategoryController {
             const category = await this._categoryService.create({ name });
 
             return response.json(category);
-        } catch (error) {
+        } catch (error: any) {
             return response.status(500).json({ error: error.message });
         }
     }
@@ -41,7 +42,7 @@ class CategoryController {
             const category =  await this._categoryService.update(Number(id), { name });
 
             return response.json(category);
-        } catch (error) {
+        } catch (error: any) {
             return response.status(500).json({ error: error.message });
         }
     }
@@ -53,7 +54,7 @@ class CategoryController {
             await this._categoryService.delete(Number(id));
 
             return response.status(204).send();
-        } catch (error) {
+        } catch (error: any) {
             return response.status(500).json({ error: error.message });
         }
     }

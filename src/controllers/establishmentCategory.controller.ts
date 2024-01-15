@@ -22,7 +22,7 @@ class EstablishmentCategoryController {
                 },
             });
             response.json(establishmentCategories);
-        } catch (error) {
+        } catch (error: any) {
             response.status(500).json({ message: error.message });
         }
     }
@@ -31,7 +31,7 @@ class EstablishmentCategoryController {
         try {
             const establishmentCategory = await this.establishmentCategoryService.getById(Number(request.params.id));
             response.json(establishmentCategory);
-        } catch (error) {
+        } catch (error: any) {
             response.status(500).json({ message: error.message });
         }
     }
@@ -40,7 +40,7 @@ class EstablishmentCategoryController {
         try {
             const establishmentCategory = await this.establishmentCategoryService.create(request.body);
             response.json(establishmentCategory);
-        } catch (error) {
+        } catch (error: any) {
             response.status(500).json({ message: error.message });
         }
     }
@@ -49,7 +49,7 @@ class EstablishmentCategoryController {
         try {
             const establishmentCategory = await this.establishmentCategoryService.update(Number(request.params.id), request.body);
             response.json(establishmentCategory);
-        } catch (error) {
+        } catch (error: any) {
             response.status(500).json({ message: error.message });
         }
     }
@@ -58,7 +58,7 @@ class EstablishmentCategoryController {
         try {
             const establishmentCategory = await this.establishmentCategoryService.delete(Number(request.params.id));
             response.json(establishmentCategory);
-        } catch (error) {
+        } catch (error: any) {
             response.status(500).json({ message: error.message });
         }
     }
