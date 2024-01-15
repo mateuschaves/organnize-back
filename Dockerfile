@@ -1,6 +1,11 @@
 # Specify the base image
 FROM node:17.0.1-alpine3.14
 
+ENV NEW_RELIC_DISTRIBUTED_TRACING_ENABLED=true
+ENV NEW_RELIC_LOG=stdout
+
+ENV NEW_RELIC_LICENSE_KEY=eu01xxd77f5bf677c8444bb7ea3ca839FFFFNRAL
+ENV NEW_RELIC_APP_NAME="organnize"
 
 # Install curl
 RUN apk add --no-cache curl
