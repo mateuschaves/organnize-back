@@ -1,7 +1,9 @@
 {
   "scripts": {
     "start": "",
-    "dev": "tsx watch src/index.ts"
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc -p .",
+    "build:digitalocean": "npm install --include=dev && npm run build && npm ci"
   },
   "dependencies": {
     "@prisma/client": "^5.8.0",
