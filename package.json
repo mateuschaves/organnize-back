@@ -1,8 +1,8 @@
 {
   "scripts": {
-    "start": "",
+    "start": "node build/index.js",
     "dev": "tsx watch src/index.ts",
-    "build": "tsc -p .",
+    "build": "npx tsc -p .",
     "build:digitalocean": "npm install --include=dev && npm run build && npm ci"
   },
   "dependencies": {
