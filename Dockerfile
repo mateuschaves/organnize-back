@@ -7,8 +7,7 @@ ENV NEW_RELIC_LOG=stdout
 ENV NEW_RELIC_LICENSE_KEY=eu01xxd77f5bf677c8444bb7ea3ca839FFFFNRAL
 ENV NEW_RELIC_APP_NAME="organnize"
 
-ENV DATABASE_URL=mysql://doadmin:AVNS_6QvvT4kyeoUWG1RCo-e@private-db-mysql-nyc3-95306-do-user-3954447-0.c.db.ondigitalocean.com:25060/defaultdb?ssl-mode=REQUIRED
-
+ENV DATABASE_URL=mysql://doadmin:AVNS_6QvvT4kyeoUWG1RCo-e@db-mysql-nyc3-95306-do-user-3954447-0.c.db.ondigitalocean.com:25060/defaultdb?ssl-mode=REQUIRED
 # Install curl
 RUN apk add --no-cache curl
 
