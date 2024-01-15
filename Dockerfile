@@ -19,6 +19,10 @@ RUN apk add --no-cache sudo
 # Install newrelic
 RUN curl -Ls https://download.newrelic.com/install/newrelic-cli/scripts/install.sh | bash && sudo NEW_RELIC_API_KEY=NRAK-DP71XZ47PPWONX9HK9XGXEZA14P NEW_RELIC_ACCOUNT_ID=4319496 NEW_RELIC_REGION=EU /usr/local/bin/newrelic install
 
+
+# Install newrelic postgres plugin
+RUN curl -Ls https://download.newrelic.com/install/newrelic-cli/scripts/install.sh | bash && sudo NEW_RELIC_API_KEY=NRAK-1TULVAGG0B4PF8H3R06FNAW1ZZE NEW_RELIC_ACCOUNT_ID=4319496 NEW_RELIC_REGION=EU /usr/local/bin/newrelic install -n postgres-open-source-integration 
+
 # Set the working directory
 WORKDIR /app
 
