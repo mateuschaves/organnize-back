@@ -4,7 +4,8 @@
     "dev": "tsx watch src/index.ts",
     "build": "npx tsc -p .",
     "build:digitalocean": "npm install --include=dev && npm run build && npm ci",
-    "postinstall": "npm run build"
+    "migrate": "npx prisma migrate deploy",
+    "postinstall": "npm run build && npm run migrate"
   },
   "dependencies": {
     "@prisma/client": "^5.8.0",
