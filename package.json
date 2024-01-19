@@ -5,7 +5,7 @@
     "build": "npx tsc -p .",
     "build:digitalocean": "npm install --include=dev && npm run build && npm ci",
     "migrate": "npx prisma migrate deploy",
-    "postinstall": "npm run build && npm run migrate"
+    "postinstall": "npm run build"
   },
   "dependencies": {
     "@prisma/client": "^5.8.0",
