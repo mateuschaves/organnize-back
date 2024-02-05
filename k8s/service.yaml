@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: organnize-service
+  annotations:
+    service.beta.kubernetes.io/do-loadbalancer-healthcheck-port: "8080"
+    service.beta.kubernetes.io/do-loadbalancer-healthcheck-protocol: "http"
+    service.beta.kubernetes.io/do-loadbalancer-healthcheck-path: "/"
+    service.beta.kubernetes.io/do-loadbalancer-healthcheck-check-interval-seconds: "3"
+    service.beta.kubernetes.io/do-loadbalancer-healthcheck-response-timeout-seconds: "5"
+    service.beta.kubernetes.io/do-loadbalancer-healthcheck-unhealthy-threshold: "3"
+    service.beta.kubernetes.io/do-loadbalancer-healthcheck-healthy-threshold: "5"
+spec:
+  selector:
+    name: organnize-server
+  type: LoadBalancer
+  ports:
+    - name: organnize-service
+      protocol: TCP
+      port: 8080
+      targetPort: 8080

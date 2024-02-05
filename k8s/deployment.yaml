@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: organnize-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: organnize-server
+  template:
+    metadata:
+      labels:
+        app: organnize-server
+    spec:
+      containers:
+        - name: organnize-container
+          image: wazowsky/organnize-back:latest
+          startupProbe:
+            httpGet:
+              path: /
+              port: 8080
+            periodSeconds: 4
+            failureThreshold: 30
+          readinessProbe:
+              httpGet:
+                path: /
+                port: 8080
+              periodSeconds: 3
+              failureThreshold: 1
+              # initialDelaySeconds: 10
+          livenessProbe:
+              httpGet:
+                path: /
+                port: 8080
+              periodSeconds: 5
+              failureThreshold: 1
+              timeoutSeconds: 1
+              successThreshold: 1
+
+
+# Path: k8s/service.yaml  

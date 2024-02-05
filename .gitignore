@@ -9,3 +9,9 @@ uploads/
 *.db
 
 build/
+
+dist/
+
+coverage/
+
+*.log
