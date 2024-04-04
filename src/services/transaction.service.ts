@@ -104,7 +104,9 @@ class TransactionService {
                     resolve({
                         expenses: this.expensesByCategory,
                         expensesNotMapped: this.expensesNotMapped,
-                        expensesNotMappedValue: this.expensesNotMapped.reduce((totalValueNotMapped, expense) => totalValueNotMapped + expense.Valor, 0)
+                        expensesNotMappedValue: this.expensesNotMapped.reduce((acc, curr) => {
+                            return acc + Number(String(curr.Valor).replace('R$', '').replace(',', '.').replace(' ', '')) || 0;
+                        }, 0)
                     });
                 })
         });
