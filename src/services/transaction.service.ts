@@ -101,7 +101,11 @@ class TransactionService {
                     console.log(`Total expenses not mapped: ${this.transactions.length - this.numberOfExpensesMapped}`)
                     console.table(this.expensesNotMapped);
 
-                    resolve(this.expensesByCategory);
+                    resolve({
+                        expenses: this.expensesByCategory,
+                        expensesNotMapped: this.expensesNotMapped,
+                        expensesNotMappedValue: this.expensesNotMapped.reduce((totalValueNotMapped, expense) => totalValueNotMapped + expense.Valor, 0)
+                    });
                 })
         });
     }
