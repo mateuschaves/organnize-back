@@ -15,7 +15,7 @@ class EstablishmentRepository implements EstablishmentRepositoryInterface{
     async getAll() {
         return this.prisma.establishment.findMany({
             include: {
-                CategoryEstablishment: true
+                categoryEstablishment: true
             }
         });
     }
