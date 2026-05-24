@@ -13,7 +13,7 @@
     "dotenv": "^16.3.1",
     "express": "^4.22.1",
     "multer": "^1.4.5-lts.1",
-    "newrelic": "^11.9.0"
+    "newrelic": "^14.0.0"
   },
   "devDependencies": {
     "@types/express": "^4.17.21",
